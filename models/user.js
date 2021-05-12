@@ -48,7 +48,11 @@ const UserSchema = mongoose.Schema({
             type:String,
             required:true
         }
-    }]
+    }],
+    office:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Office'
+    }
 })
 
 UserSchema.pre('save',async function(next){

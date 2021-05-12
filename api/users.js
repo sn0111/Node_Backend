@@ -6,11 +6,59 @@ const auth = require("./auth");
 const bcrypt = require('bcryptjs')
 const router = Router()
 
-
-router.get("/users",auth,async (req,res)=>{
-    res.status(201).send({user:req.user})
+// display user data
+router.get("/user",auth,async (req,res)=>{
+    res.status(201).send(req.user)
+})
+// updating user
+router.put('/user',auth, async (req,res)=>{
+    
+})
+// listing all users in the office
+router.get('/users',auth,async (req,res)=>{
+    const users = await User.find({office:req.user.office})
+    try{
+        res.status(200).json(users)
+    }catch(e){
+        res.status(500).json(e)
+    }
 })
 
+// adding new users in office
+router.post('/users',auth,async (req,res)=>{
+    const user = new User(req.body)
+    user.password="finance"
+    user.office=req.user.office
+    try{
+        await user.save()
+        res.status(201).json(user);
+    }catch(e){
+        res.status(500).json(e);
+    }
+})
+// updating users in the office
+router.put('/users/:id',auth, async (req,res)=>{
+    const _id = req.params.id
+    try{
+        User.findByIdAndUpdate({_id:_id},req.body,(err,doc)=>{
+            console.log(doc)
+        })
+        res.status(201).send({success:'user updated'})
+    }catch(e){
+        res.status(500).send(e)
+    }
+})
+//deleting users
+router.delete('/users/:id',auth, async (req,res)=>{
+    const _id = req.params.id
+    try{
+        await User.remove({_id:_id})
+        res.status(201).json({success:'user deleted'})
+    }catch(e){
+        res.status(500).json(e)
+    }
+
+})
 router.post("/register",async (req,res)=>{
     const phoneverify = await PhoneOtp.findOne({userphone:req.body.userphone})
     const msg = {}
@@ -38,9 +86,9 @@ router.post("/register",async (req,res)=>{
     }
     // res.json(msg)
 })
-router.post('/account',async (req,res)=>{
+// router.post('/account',async (req,res)=>{
     
-})
+// })
 router.post('/login',async (req,res)=>{
     const user = await User.findOne({userphone:req.body.userphone})
     if(user){

@@ -46,8 +46,8 @@ const EmailSchema = mongoose.Schema({
     },
     time:{
         type:Date,
-        default:Date.now()
-    }
+    },
+    code:String
 })
 const EmailVerify = mongoose.model('EmailVerify',EmailSchema)
 
