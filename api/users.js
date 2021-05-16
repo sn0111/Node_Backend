@@ -60,8 +60,8 @@ router.delete('/users/:id',auth, async (req,res)=>{
 
 })
 router.post("/register",async (req,res)=>{
-    const phoneverify = await PhoneOtp.findOne({userphone:req.body.userphone})
-    const msg = {}
+    console.log(req.body)
+    // const phoneverify = await PhoneOtp.findOne({userphone:req.body.userphone})
     const user =new User(req.body)
     try{
         // if(!phoneverify){
@@ -82,7 +82,7 @@ router.post("/register",async (req,res)=>{
         // const userObject = await user.removeObjects()
         res.send({user,token})
     }catch(e){
-        res.send(e)
+        res.status(400).send(e)
     }
     // res.json(msg)
 })
@@ -90,12 +90,13 @@ router.post("/register",async (req,res)=>{
     
 // })
 router.post('/login',async (req,res)=>{
+    console.log(req.body)
     const user = await User.findOne({userphone:req.body.userphone})
     if(user){
         try{
             const check =await bcrypt.compare(req.body.password,user.password)
             if(!check){
-                res.send('login failed')
+                res.status(400).send({error:"Wrong password"})
             }
             else{
                 const token =await user.generateToken()
@@ -105,7 +106,7 @@ router.post('/login',async (req,res)=>{
             res.send(e)
         }
     }else{
-        res.send('wrong userphone or password')
+        res.status(400).send({error:'wrong userphone or password'})
     }
 })
 module.exports = router

@@ -37,8 +37,11 @@ const Account = mongoose.model('Account',new mongoose.Schema({
     account_amount:String,
     total_holders:String,
     required_holders:String,
-    pause:Boolean,
+    hold:Boolean,
+    archived:Boolean,
     finished:Boolean,
+    no_of_times:String,
+    type:String,
     no_of_payments:String,
     office:{
         type:mongoose.Schema.Types.ObjectId,

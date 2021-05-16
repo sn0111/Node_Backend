@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const bcrypt = require('bcryptjs')
 const path = require('path')
 const bodyparser = require('body-parser')
@@ -8,8 +9,9 @@ const { regRouter } = require('./api/registration')
 
 require('./db/database')
 const app = express()
+app.use(cors())
 const port = process.env.port | 3000
-
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json())
 app.use(express.static(path.join(__dirname,'./build')));
 app.use(userRouter)
