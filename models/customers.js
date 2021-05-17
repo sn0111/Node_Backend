@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-
-const Customer = mongoose.model('Customer',new mongoose.Schema({
+const bcrypt = require('bcryptjs')
+const customerSchema = new mongoose.Schema({
     customer_phone:{
         type:String,
         required:true
@@ -26,7 +26,16 @@ const Customer = mongoose.model('Customer',new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Payment'
     }]
-}))
+})
+customerSchema.pre('save',async function(next){
+    const customer = this
+    if(customer.isModified('password')){
+        console.log(customer.password)
+        customer.password = await bcrypt.hash(customer.password,8)
+    }
+    next()
+})
+const Customer = mongoose.model('Customer',customerSchema)
 
 const Payment = mongoose.model('Payment',new mongoose.Schema({
     total_amount:String,
@@ -36,10 +45,17 @@ const Payment = mongoose.model('Payment',new mongoose.Schema({
     due:Boolean,
     account:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Account'
+        ref:'Account',
+        required:true
     },
     customer:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Customer'
+        ref:'Customer',
+        required:true
     }
 }))
+
+module.exports={
+    Customer,
+    Payment
+}
