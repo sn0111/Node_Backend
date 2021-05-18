@@ -89,7 +89,7 @@ router.post("/register",async (req,res)=>{
 // router.post('/account',async (req,res)=>{
     
 // })
-router.post('/login',async (req,res)=>{
+router.post('/fin/login',async (req,res)=>{
     console.log(req.body)
     const user = await User.findOne({userphone:req.body.userphone})
     if(user){
