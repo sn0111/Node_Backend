@@ -52,7 +52,15 @@ const UserSchema = mongoose.Schema({
     office:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Office'
-    }
+    },
+    accounts:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Account'
+    }],
+    payments:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Payment'
+    }]
 })
 
 UserSchema.pre('save',async function(next){

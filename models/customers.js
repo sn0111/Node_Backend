@@ -48,14 +48,29 @@ const Payment = mongoose.model('Payment',new mongoose.Schema({
         ref:'Account',
         required:true
     },
-    customer:{
+    user:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Customer',
+        ref:'User',
+        required:true
+    }
+}))
+
+const Bidding = mongoose.model('Bidding',new mongoose.Schema({
+    message:String,
+    time:Date,
+    account:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Account'
+    },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
         required:true
     }
 }))
 
 module.exports={
     Customer,
-    Payment
+    Payment,
+    Bidding
 }

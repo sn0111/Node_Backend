@@ -199,6 +199,10 @@ regRouter.post('/account',auth,async (req,res)=>{
     try{
         account.office=req.user.office
         await account.save()
+        await User.findByIdAndUpdate({_id:req.user._id},{accounts:account})
+        // user.accounts = account._id
+        // console.log(user.accounts)
+        // await user.save()
         res.status(201).send(account)
     }catch(e){
         res.status(500).send(e);

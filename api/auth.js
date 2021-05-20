@@ -7,6 +7,11 @@ const auth =async (req,res,next)=>{
         const user = await User.findOne({_id:decode._id,'tokens.token':token})
         if(!user)
             throw new Error()
+
+        if(req.header('account')){
+            const account = req.header('account')
+            req.account=account;
+        }
         req.token =token
         req.user=user
         next()

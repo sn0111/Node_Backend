@@ -3,7 +3,7 @@ const { Router } = require('express')
 const { Customer } = require('../models/customers')
 const { Account } = require('../models/models')
 const auth = require('./auth')
-
+const account_check = require('./permission')
 
 custRouter = Router()
 custRouter.post('/customers/:account_id',auth,async (req,res)=>{

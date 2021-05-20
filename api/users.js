@@ -3,7 +3,8 @@ const { PhoneOtp } = require("../models/reg");
 const jwt = require('jsonwebtoken')
 const { User} = require("../models/user");
 const auth = require("./auth");
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const account_check = require("./permission");
 const router = Router()
 
 // display user data
@@ -15,51 +16,103 @@ router.put('/user',auth, async (req,res)=>{
     
 })
 // listing all users in the office
-router.get('/users',auth,async (req,res)=>{
-    const users = await User.find({office:req.user.office})
-    try{
-        res.status(200).json(users)
-    }catch(e){
-        res.status(500).json(e)
+router.get('/office/users',auth,async (req,res)=>{
+    if(!req.account){
+        res.status(400).send({error:'account id is required'})
+    }
+    var v = account_check(req.user.accounts,req.account)
+    if(!v){
+        res.status(400).send({error:'account not found'})
+    }else{
+        const users = await User.find({office:req.user.office})
+        try{
+            res.status(200).json(users)
+        }catch(e){
+            res.status(500).json(e)
+        }
     }
 })
 
-// adding new users in office
-router.post('/users',auth,async (req,res)=>{
-    const user = new User(req.body)
-    user.password="finance"
-    user.office=req.user.office
-    try{
-        await user.save()
-        res.status(201).json(user);
-    }catch(e){
-        res.status(500).json(e);
+// listing all users in the account
+router.get('/account/users',auth,async (req,res)=>{
+    if(!req.account){
+        res.status(400).send({error:'account id is required'})
+    }
+    var v = account_check(req.user.accounts,req.account)
+    if(!v){
+        res.status(400).send({error:'account not found'})
+    }else{
+        const users = await User.find({accounts:req.account})
+        try{
+            res.status(200).json(users)
+        }catch(e){
+            res.status(500).json(e)
+        }
+    }
+})
+
+// adding new users in account
+router.post('/account/users',auth,async (req,res)=>{
+    if(!req.account){
+        res.status(400).send({error:'account id is required'})
+    }
+    var v = account_check(req.user.accounts,req.account)
+    if(!v){
+        res.status(400).send({error:'account not found'})
+    }else{
+        const user = new User(req.body)
+        user.password="finance"
+        user.office=req.user.office
+        if(!req.body.is_staff)
+            user.accounts=req.account
+        try{
+            await user.save()
+            res.status(201).json(user);
+        }catch(e){
+            res.status(500).json(e);
+        }
     }
 })
 // updating users in the office
 router.put('/users/:id',auth, async (req,res)=>{
-    const _id = req.params.id
-    try{
-        User.findByIdAndUpdate({_id:_id},req.body,(err,doc)=>{
-            console.log(doc)
-        })
-        res.status(201).send({success:'user updated'})
-    }catch(e){
-        res.status(500).send(e)
+    if(!req.account){
+        res.status(400).send({error:'account id is required'})
+    }
+    var v = account_check(req.user.accounts,req.account)
+    if(!v){
+        res.status(400).send({error:'account not found'})
+    }else{
+        const _id = req.params.id
+        try{
+            User.findByIdAndUpdate({_id:_id},req.body,(err,doc)=>{
+                console.log(doc)
+            })
+            res.status(201).send({success:'user updated'})
+        }catch(e){
+            res.status(500).send(e)
+        }
     }
 })
 //deleting users
 router.delete('/users/:id',auth, async (req,res)=>{
-    const _id = req.params.id
-    try{
-        await User.remove({_id:_id})
-        res.status(201).json({success:'user deleted'})
-    }catch(e){
-        res.status(500).json(e)
+    if(!req.account){
+        res.status(400).send({error:'account id is required'})
+    }
+    var v = account_check(req.user.accounts,req.account)
+    if(!v){
+        res.status(400).send({error:'account not found'})
+    }else{
+        const _id = req.params.id
+        try{
+            await User.remove({_id:_id})
+            res.status(201).json({success:'user deleted'})
+        }catch(e){
+            res.status(500).json(e)
+        }
     }
 
 })
-router.post("/register",async (req,res)=>{
+router.post("/fin/register",async (req,res)=>{
     console.log(req.body)
     // const phoneverify = await PhoneOtp.findOne({userphone:req.body.userphone})
     const user =new User(req.body)
