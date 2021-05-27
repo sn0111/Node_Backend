@@ -44,9 +44,7 @@ router.get('/account/users',auth,async (req,res)=>{
         res.status(400).send({error:'account not found'})
     }else{
         try{
-            const users = await User.aggregate([
-                {$match:{is_staff:false}}
-            ])
+            const users = await User.find({accounts:req.account})
             res.status(200).json(users)
         }catch(e){
             res.status(500).json(e)

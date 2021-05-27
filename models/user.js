@@ -43,6 +43,9 @@ const UserSchema = mongoose.Schema({
         type:Boolean,
         default:false
     },
+    empolyee_id:{
+        type:String
+    },
     tokens:[{
         token:{
             type:String,

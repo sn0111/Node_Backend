@@ -43,6 +43,7 @@ const Payment = mongoose.model('Payment',new mongoose.Schema({
     paid_date:Date,
     due_date:Date,
     due:Boolean,
+    status:String,
     account:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Account',
