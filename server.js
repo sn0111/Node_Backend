@@ -13,6 +13,7 @@ const payRouter= require('./api/payments')
 const bidRouter= require('./api/bidding')
 const { Bidding } = require('./models/customers')
 const { User } = require('./models/user')
+const request = require('request')
 
 require('./db/database')
 const app = express()
@@ -36,30 +37,55 @@ server.listen(3000,()=>{
     console.log("Finance 3000 server is running...........")
 })
 // io = socket(server);
-
+const get_id =async (token)=>{
+  const decode = jwt.verify(token,'this is basic encryption')
+  const user =await User.findOne({_id:decode._id,'tokens.token':token})
+  var id="";
+  // console.log("ddddd:"+user._id)
+  var _id=user._id
+  console.log(_id)
+  return _id;
+}
 io.on("connection", (socket) => {
   console.log(socket.id);
-  socket.emit("socket id",socket.id)
+  socket.on("socket id",async (token)=>{
+    const decode = jwt.verify(token,'this is basic encryption')
+    const user =await User.findOne({_id:decode._id,'tokens.token':token})
+    console.log(user._id)
+    socket.emit("socket id",user._id)
+  })
 
   // socket.on("socket id", (data) => {
   //   // socket.join(data);
   //   // console.log("User Joined Room: " + data);
   // });
-const get_id =async (token)=>{
-  const decode = jwt.verify(token,'this is basic encryption')
-  const user =await User.findOne({_id:decode._id,'tokens.token':token})
-  return user.toJSON()
-}
-  socket.on("send message", (body)=>{
+  socket.on("send message",(body)=>{
     // console.log(body)
-    const user_id = get_id(body.token)
-    console.log("user:"+user_id)
-    const bidding =new Bidding({
-      message:body.message,
-      time:Date(),
-      account:body.account_id,
-    })
-    io.emit("message",body)
+    // var user_id =get_id(body.token)
+    setTimeout(()=>{
+      // console.log("user:"+user_id)
+      // const bidding =new Bidding()
+      var bodydata={
+        message:body.message,
+        time:Date()
+      }
+      console.log(body.account)
+      var headers={
+        "accept": "application/json",
+        "content-type": "application/json",
+        'Authorization':"Bearer "+body.token,
+        "account":body.account_id
+      }
+      request.post({
+        url:'http://localhost:3000/bidding',
+        json:true,
+        body:bodydata,
+        headers:headers
+      },(error,res,body)=>{
+        // console.log(res.body)
+      });
+      io.emit("message",body)
+    },0)
   });
 
   socket.on("disconnect", () => {

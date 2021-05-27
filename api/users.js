@@ -35,15 +35,18 @@ router.get('/office/users',auth,async (req,res)=>{
 
 // listing all users in the account
 router.get('/account/users',auth,async (req,res)=>{
+    
     if(!req.account){
         res.status(400).send({error:'account id is required'})
     }
-    var v = account_check(req.user.accounts,req.account)
+    var v =await account_check(req.user.accounts,req.account)
     if(!v){
         res.status(400).send({error:'account not found'})
     }else{
-        const users = await User.find({accounts:req.account})
         try{
+            const users = await User.aggregate([
+                {$match:{is_staff:false}}
+            ])
             res.status(200).json(users)
         }catch(e){
             res.status(500).json(e)

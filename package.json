@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server":"nodemon server.js",
-    "client":"npm start --prefix client",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
     "dev": "concurrently -k \"npm run server\" \"npm run client\""
   },
   "keywords": [],
@@ -21,6 +21,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.7",
     "nodemailer": "^6.6.0",
+    "request": "^2.88.2",
     "socket.io": "^4.1.1",
     "twilio": "^3.61.0",
     "validator": "^13.6.0"
