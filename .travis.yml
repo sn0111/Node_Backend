@@ -9,16 +9,16 @@ before_install:
   - npm install 
 
 script:
-  - npm run test
+  npm run test
 
-  deploy:
-    provider: elasticbeanstalk
-    region: "ap-south-1"
-    app: "finance"
-    env: "Finance-env"
-    bucket_name: "elasticbeanstalk-ap-south-1-647438919108"
-    bucket_path: "finance"
-    on:
-      branch: main
-    access_key_id: "AKIAZNPS54XCF52JFCSI"
-    secret_access_key: "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"
+deploy:
+  provider: elasticbeanstalk
+  region: "ap-south-1"
+  app: "finance"
+  env: "Finance-env"
+  bucket_name: "elasticbeanstalk-ap-south-1-647438919108"
+  bucket_path: "finance"
+  on:
+    branch: main
+  access_key_id: "AKIAZNPS54XCF52JFCSI"
+  secret_access_key: "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"
