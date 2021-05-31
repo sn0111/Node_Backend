@@ -9,7 +9,7 @@ before_install:
   - npm install 
 
 script:
-  npm run test
+  npm start
 
 deploy:
   provider: elasticbeanstalk
